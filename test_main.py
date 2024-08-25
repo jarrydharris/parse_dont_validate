@@ -1,14 +1,29 @@
-from main import Metadata, MetadataParser
+from main import Metadata, MetadataParser, InvalidUpdateError
+import pytest
 
 
-class TestParseMetadata__apply:
-    def it_should_update_fields_given_matching_keys(self):
-        
-        
-        with open("./simple_key_value.csv", "r") as fp:
-            metadata: Metadata = MetadataParser().parse_text_io(fp)
+class TestParseMetadata__parse_text_io:
+    def should_update_fields_given_matching_keys(self):
+        metadata: Metadata = Metadata()
+        with open("./testcases/simple_key_value.csv", "r") as fp:
+            MetadataParser(fp).parse_text_io(metadata)
 
         assert metadata.key_1 == "value_1"
         assert metadata.key_2 == "value_2"
 
-    
+    def should_raise_invalid_update_error_given_invalid_key(self):
+        metadata: Metadata = Metadata()
+        with open("./testcases/invalid_key_value.csv", "r") as fp, pytest.raises(InvalidUpdateError):
+            MetadataParser(fp).parse_text_io(metadata)
+
+    def should_ignore_out_of_format_lines(self):
+        metadata: Metadata = Metadata()
+        with open("./testcases/simple_key_value_with_oof_line.csv", "r") as fp:
+            MetadataParser(fp).parse_text_io(metadata)
+
+    def should_raise_invalid_update_error_if_fields_are_missing(self):
+        metadata: Metadata = Metadata()
+        with open("./testcases/missing_expected_field.csv", "r") as fp, pytest.raises(InvalidUpdateError):
+            MetadataParser(fp).parse_text_io(metadata)
+
+
