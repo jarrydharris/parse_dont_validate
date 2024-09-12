@@ -5,7 +5,7 @@ from typing import Optional
 class InvalidUpdateError(Exception):
     pass
 
-@dataclass(init=False)
+@dataclass
 class Metadata:
     key_1: str
     key_2: str
