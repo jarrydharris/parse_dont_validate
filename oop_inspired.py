@@ -17,7 +17,7 @@ class Metadata:
 class UpdateField:
     name: str
     value: str
-    error: Optional[BaseException]
+    error: Optional[InvalidUpdateError]
 
 
 class MetadataParser:
@@ -39,7 +39,7 @@ class MetadataParser:
             key, value = comma_seperated_line
 
             if not self._matches_predefined_keys(key):
-                error = ValueError("Invalid key.")
+                error = InvalidUpdateError("Invalid key.")
 
             updates.append(UpdateField(key, value, error))
 
