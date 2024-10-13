@@ -2,27 +2,25 @@ from dataclasses import dataclass
 from io import TextIOWrapper
 from typing import Optional
 
-
-class InvalidUpdateError(Exception):
-    pass
+from validation_exceptions import InvalidUpdateError
 
 
 @dataclass
-class Metadata:
-    key_1: str
-    key_2: str
-
-
-@dataclass
-class UpdateField:
+class User:
     name: str
-    value: str
+    dob: str
+
+
+@dataclass
+class ParseUserResult:
+    name: str
+    dob: str
     error: Optional[InvalidUpdateError]
 
 
 class MetadataParser:
 
-    _valid_keys: list[str] = ["key_1", "key_2"]
+    _valid_keys: list[str] = ["name", "dob"]
 
     def __init__(self, text_io: TextIOWrapper) -> None:
 
@@ -41,11 +39,11 @@ class MetadataParser:
             if not self._matches_predefined_keys(key):
                 error = InvalidUpdateError("Invalid key.")
 
-            updates.append(UpdateField(key, value, error))
+            updates.append(ParseUserResult(key, value, error))
 
         self.updates = updates
 
-    def parse_text_io(self, metadata: Metadata) -> None:
+    def parse_text_io(self, metadata: User) -> None:
 
         errors = [update.error for update in self.updates]
 
@@ -57,7 +55,7 @@ class MetadataParser:
             raise InvalidUpdateError(f"Missing required keys")
 
         for update in self.updates:
-            setattr(metadata, update.name, update.value)
+            setattr(metadata, update.name, update.dob)
 
     def _matches_predefined_keys(self, key: str) -> bool:
         return key in self._valid_keys

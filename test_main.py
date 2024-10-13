@@ -1,10 +1,10 @@
-from oop_inspired import Metadata, MetadataParser, InvalidUpdateError
+from oop_inspired import User, MetadataParser, InvalidUpdateError
 import pytest
 
 
 @pytest.fixture
-def metadata() -> Metadata:
-    return Metadata("a", "b")
+def metadata() -> User:
+    return User("a", "b")
 
 
 class TestParseMetadata__parse_text_io:
@@ -13,8 +13,8 @@ class TestParseMetadata__parse_text_io:
         with open("./testcases/simple_key_value.csv", "r") as fp:
             MetadataParser(fp).parse_text_io(metadata)
 
-        assert metadata.key_1 == "value_1"
-        assert metadata.key_2 == "value_2"
+        assert metadata.name == "value_1"
+        assert metadata.dob == "value_2"
 
     def should_raise_invalid_update_error_given_invalid_key(self, metadata):
         with open("./testcases/invalid_key_value.csv", "r") as fp, pytest.raises(
